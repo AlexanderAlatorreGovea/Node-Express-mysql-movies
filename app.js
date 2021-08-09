@@ -6,7 +6,19 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const cors = require("cors");
-const db = require('./models/index');
+const { sequelize } = require('./models')
+
+//Database
+// const db = require('./database');
+ 
+// //Test DB
+sequelize.authenticate()
+  .then(() => console.log('Database connected...'))
+  .catch(err => {
+    console.log('Error: ', err.message)
+    process.exit(1);
+  });
+
 
 const app = express();
 
@@ -17,17 +29,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-async function synchronizeModels(params) {
-  await db.sequelize.sync({ force: true });
-}
-synchronizeModels();
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -47,7 +51,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  console.log('Error with status 500')
 });
 
 module.exports = app;
