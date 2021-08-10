@@ -4,9 +4,8 @@ const { User } = require("../models");
 
 /* GET users listing. */
 router.get("/", async (req, res) => {
+  const users = await User.findAll();
   try {
-    const users = await User.findAll();
-
     res.status(200).json({
       status: 'success',
       result: users.length,
@@ -14,8 +13,6 @@ router.get("/", async (req, res) => {
         data: users
       }
     })
-
-    return res.send(users);
   } catch (err) {
     return res.status(500).json({ error: "Something went wrong" });
   }
@@ -26,9 +23,17 @@ router.get("/:id", async (req, res) => {
   try {
     const user = await User.findByPk(id);
 
-    return res.send(user);
+    if(!user) {
+      return new Error(`No document found with that ID with status ${404}`)
+    }
+
+    res.status(200).json({
+      status: 'success',
+      response: {
+        data: user
+      }
+    })
   } catch (error) {
-    console.log("Error: ", err);
     return res.status(500).send("Something went wrong");
   }
 });
@@ -49,7 +54,13 @@ router.post("/", async (req, res) => {
       email,
     });
 
-    return res.send(user);
+    res.status(201).json({
+      status: 'success',
+      response: {
+        data: user
+      }
+    });
+
   } catch (error) {
     return res.status(500).send({
       message: error.message || "Some error occurred while creating the User.",
@@ -59,14 +70,18 @@ router.post("/", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
+  const user = await User.findByPk(id);
+
+  if (!user) {
+    throw new Error (`No document found with that ID, status ${404}`) 
+  }
 
   try {
-    const user = await User.findByPk(id);
-
     await user.destroy();
 
-    return res.send({
-      message: "User was deleleted",
+    res.status(204).json({
+      status: 'success',
+      data: null
     });
   } catch (error) {
     return res.status(500).send({
@@ -87,7 +102,7 @@ router.put("/:id", async (req, res) => {
         id
       }
     });
-
+    
     if(!user) {
       return res.send({
         message: "No user found"
