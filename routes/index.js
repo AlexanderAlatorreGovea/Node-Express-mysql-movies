@@ -1,28 +1,9 @@
-var express = require("express");
-var router = express.Router();
-
-/* MIDDLEWARE FUNCTIONS */
-
-const myLogger = function (req, res, next) {
-  console.log("logged");
-  next();
-};
-
-var requestTime = function (req, res, next) {
-  req.requestTime = Date.now()
-  next()
-}
-
-/* END OF MIDDLEWARE FUNCTIONS */
+const express = require("express");
+const router = express.Router();
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
-  res.render("index", { title: "Express" });
-});
-
-router.get("/:id", requestTime, function (req, res, next) {
-  res.send(`respond with a user with the id ${req.params.id}
-    with request time of ${req.requestTime}`);
+  res.send("homepage");
 });
 
 module.exports = router;
