@@ -7,12 +7,12 @@ router.get("/", async (req, res) => {
   const users = await User.findAll();
   try {
     res.status(200).json({
-      status: 'success',
+      status: "success",
       result: users.length,
       response: {
-        data: users
-      }
-    })
+        data: users,
+      },
+    });
   } catch (err) {
     return res.status(500).json({ error: "Something went wrong" });
   }
@@ -23,16 +23,16 @@ router.get("/:id", async (req, res) => {
   try {
     const user = await User.findByPk(id);
 
-    if(!user) {
-      return new Error(`No document found with that ID with status ${404}`)
+    if (!user) {
+      return new Error(`No document found with that ID with status ${404}`);
     }
 
     res.status(200).json({
-      status: 'success',
+      status: "success",
       response: {
-        data: user
-      }
-    })
+        data: user,
+      },
+    });
   } catch (error) {
     return res.status(500).send("Something went wrong");
   }
@@ -55,12 +55,11 @@ router.post("/", async (req, res) => {
     });
 
     res.status(201).json({
-      status: 'success',
+      status: "success",
       response: {
-        data: user
-      }
+        data: user,
+      },
     });
-
   } catch (error) {
     return res.status(500).send({
       message: error.message || "Some error occurred while creating the User.",
@@ -73,15 +72,15 @@ router.delete("/:id", async (req, res) => {
   const user = await User.findByPk(id);
 
   if (!user) {
-    throw new Error (`No document found with that ID, status ${404}`) 
+    throw new Error(`No document found with that ID, status ${404}`);
   }
 
   try {
     await user.destroy();
 
     res.status(204).json({
-      status: 'success',
-      data: null
+      status: "success",
+      data: null,
     });
   } catch (error) {
     return res.status(500).send({
@@ -99,16 +98,15 @@ router.put("/:id", async (req, res) => {
   try {
     const user = await User.update(req.body, {
       where: {
-        id
-      }
+        id,
+      },
     });
-    
-    if(!user) {
-      return res.send({
-        message: "No user found"
-      })
-    }
 
+    if (!user) {
+      return res.send({
+        message: "No user found",
+      });
+    }
 
     res.send(user);
   } catch (error) {
